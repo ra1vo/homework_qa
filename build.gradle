@@ -1,0 +1,59 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'net.datafaker:datafaker:1.6.0'
+    implementation group: 'org.assertj', name: 'assertj-core', version: '3.23.1'
+    implementation group: 'io.cucumber', name: 'cucumber-java', version: '7.9.0'
+    implementation group: 'org.springframework', name: 'spring-context', version: '5.3.23'
+    implementation group: 'org.springframework', name: 'spring-test', version: '5.3.23'
+    implementation 'com.google.code.gson:gson:2.10'
+    testImplementation group: 'io.cucumber', name: 'cucumber-junit', version: '7.9.0'
+    testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.2.0'
+
+
+    testImplementation 'io.cucumber:cucumber-spring:7.9.0'
+//    implementation 'junit:junit:4.13.1'
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
+
+    testImplementation group: 'io.cucumber', name: 'cucumber-junit-platform-engine', version: '7.9.0'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-suite', version: '1.9.1'
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-engine', version: '1.9.1'
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-suite-engine', version: '1.9.1'
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom implementation
+    }
+}
+
+task cucumberCli() {
+    dependsOn assemble, testClasses, classes
+    doLast {
+        javaexec {
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = [
+                    '--plugin', 'pretty',
+                    '--plugin', 'html:target/cucumber-report.html',
+                    '--glue', 'org.example.stepdefs',  'src/main/resources']
+        }
+    }
+}
