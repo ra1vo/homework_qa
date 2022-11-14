@@ -24,7 +24,7 @@ public class DataGenerator {
             p.setId(new Random().nextInt(high - low) + low);
             p.setFirstName(firstName);
             p.setLastName(lastName);
-            p.setEmail(faker.internet().emailAddress(firstName + "." + lastName));
+            p.setEmail(faker.internet().emailAddress(firstName + "." + lastName).toLowerCase());
             p.setCompanyId(new Random().nextInt(high - low) + low);
             persons.add(p);
         }
